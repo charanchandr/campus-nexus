@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amrita Nexus | Secure Student Portal</title>
+    <!-- Modern Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Top Portal Header (Blue Theme) -->
+    <header class="portal-header">
+        <div class="header-content">
+            <span class="portal-title">Amrita Nexus </span>
+        </div>
+    </header>
+
+    <!-- Sub Navigation -->
+    <nav class="sub-nav">
+        <ul>
+            <li><a href="#" onclick="showSection('home')">Home</a></li>
+            <li id="logout-link" style="display: none;"><a href="#" onclick="logout()">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <!-- AUTH SECTION -->
+        <section id="auth-section">
+            <div class="auth-grid">
+                <div class="auth-card active" id="login-form">
+                    <h2>Amrita Nexus Login</h2>
+                    <p>Access the secure campus lost & found portal</p>
+                    <div class="form-group">
+                        <label>University ID</label>
+                        <input type="text" id="login-id" placeholder="Ex: CB.SC.U4CSE23332">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="login-pass" placeholder="••••••••">
+                            <i class="fas fa-eye toggle-password"
+                                onclick="togglePasswordVisibility('login-pass', this)"></i>
+                        </div>
+                    </div>
+                    <div style="text-align: right; margin-bottom: 20px;">
+                        <a href="#" onclick="showForgotPassword()"
+                            style="font-size: 0.85rem; color: var(--primary-blue); text-decoration: none;">Forgot
+                            Password?</a>
+                    </div>
+                    <button class="btn-primary" onclick="handleLogin()">Sign In</button>
+                    <p class="toggle-text">New user? <a href="#" onclick="toggleAuth()">Register here</a></p>
+                </div>
+
+                <div class="auth-card" id="register-form" style="display: none;">
+                    <h2>Join Amrita Nexus</h2>
+                    <p>Create your university security profile</p>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="reg-name" placeholder="Full name">
+                    </div>
+                    <div class="form-group">
+                        <label>University ID</label>
+                        <input type="text" id="reg-id" placeholder="Ex: CB.SC.U4CSE23332">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="reg-email" placeholder="email@amrita.edu">
+                    </div>
+                    <div class="form-group">
+                        <label>Role</label>
+                        <select id="reg-role">
+                            <option value="Student">Student</option>
+                            <option value="Faculty">Faculty</option>
+                            <option value="Admin">System Administrator</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="reg-pass" placeholder="Create strong password">
+                            <i class="fas fa-eye toggle-password"
+                                onclick="togglePasswordVisibility('reg-pass', this)"></i>
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="handleRegister()">Secure Register</button>
+                    <p class="toggle-text">Already have an account? <a href="#" onclick="toggleAuth()">Login here</a>
+                    </p>
+                </div>
+
+                <!-- MFA MFA Screen -->
+                <div class="auth-card" id="mfa-form" style="display: none;">
+                    <h2>Security Verification</h2>
+                    <p>NIST SP 800-63-2 Level 2 Verification</p>
+                    <div class="form-group" style="margin-top: 30px; margin-bottom: 40px;">
+                        <label>Enter 6-Character Code</label>
+                        <input type="text" id="mfa-code" placeholder="XXXXXX"
+                            style="text-align: center; letter-spacing: 8px; font-weight: 900; font-size: 1.5rem; height: 60px;">
+                    </div>
+                    <button class="btn-primary" onclick="handleMFA()">Verify & Proceed</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- DASHBOARD SECTION (Hidden by default) -->
+        <section id="dashboard-section" style="display: none;">
+            <div class="welcome-banner">
+                <p>Welcome! <span id="user-display-name">Kola Charan Chandra</span>
+                    <span id="user-role-badge" class="role-badge">Student</span>
+                    <br>
+                    <span style="font-size: 0.9rem; color: #666;">University ID: <span
+                            id="user-display-id">CB.SC.U4CSE23332</span></span>
+                </p>
+            </div>
+
+            <div class="main-grid">
+                <!-- Platform Summary Card -->
+                <div class="card hero-card">
+                    <div class="quote-content">
+                        <h3>Hi there, Amritian! 👋</h3>
+                        <p class="quote-text">
+                            Lost your favorite bottle or found someone's ID card? You're in the right place!
+                            <b>Amrita Nexus</b> is a student-first portal designed to help you recover lost items
+                            across campus. We use top-notch security to keep your data safe, while making it
+                            super easy for you to report or claim items. Let's look out for each other!
+                        </p>
+                    </div>
+                    <div class="author-img">
+                        <img src="/static/img/hero-icon.png" alt="Lost & Found Icon"
+                            style="height: 120px; width: auto; border-radius: 50%;">
+                    </div>
+                </div>
+
+                <!-- Alerts Card -->
+                <div class="card alerts-card">
+                    <h3>💡 Quick Tips</h3>
+                    <ul class="alerts-list">
+                        <li><i class="fas fa-shield-alt" style="color: var(--primary);"></i> Register your lost items
+                            immediately to start the search.</li>
+                        <li><i class="fas fa-check-circle" style="color: var(--success);"></i> Always check the 'Found
+                            Items' feed if you've lost something.</li>
+                        <li><i class="fas fa-user-lock" style="color: var(--primary);"></i> Your private locations are
+                            encrypted for your safety.</li>
+                        <li><i class="fas fa-id-card" style="color: var(--primary);"></i> Keep your University ID ready
+                            for physical verification.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Action Grid (Dynamic Buttons) -->
+            <div class="action-grid" id="dashboard-main">
+                <div class="action-btn" onclick="showSection('lost-items')">
+                    <div class="btn-icon"><i class="fas fa-search"></i></div>
+                    <span class="btn-label">Find Lost Items</span>
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">Search for things you might have
+                        misplaced.</p>
+                </div>
+                <div class="action-btn" onclick="showSection('found-items')">
+                    <div class="btn-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                    <span class="btn-label">Report Found Item</span>
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">Help a fellow student by returning an
+                        item.</p>
+                </div>
+                <div class="action-btn" onclick="showSection('profile')">
+                    <div class="btn-icon"><i class="fas fa-user-circle"></i></div>
+                    <span class="btn-label">My Profile</span>
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">Manage your account and view your
+                        history.</p>
+                </div>
+                <div class="action-btn" onclick="showSection('messages')">
+                    <div class="btn-icon"><i class="fas fa-envelope-open-text"></i></div>
+                    <span class="btn-label">Inbox</span>
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">View signed messages from other
+                        students.</p>
+                </div>
+                <div class="action-btn" onclick="showSection('security')">
+                    <div class="btn-icon"><i class="fas fa-lock"></i></div>
+                    <span class="btn-label">Security Center</span>
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">Check permissions and system safety
+                        status.</p>
+                </div>
+            </div>
+
+            <!-- MESSAGES SECTION -->
+            <div id="messages-section" style="display: none;">
+                <div style="margin-bottom: 25px;">
+                    <h2>Secure Inbox</h2>
+                    <p style="color: #666;">Messages verified with <b>ECDSA Digital Signatures</b></p>
+                </div>
+                <div id="messages-container" style="display: flex; flex-direction: column; gap: 20px;">
+                    <!-- Messages will load here -->
+                </div>
+            </div>
+
+            <!-- LOST ITEMS SECTION -->
+            <div id="lost-items-section" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>Item Feed</h2>
+                    <button class="btn-primary" style="width: auto; padding: 10px 20px;" onclick="showPostModal()">+
+                        Post New Item</button>
+                </div>
+                <div id="items-container" class="items-grid"></div>
+            </div>
+
+            <!-- SECURITY SECTION -->
+            <div id="security-section" class="card" style="display: none;">
+                <h2>Access Control Matrix (ACM)</h2>
+                <p style="color: #666; margin-bottom: 20px;">Your role-based permissions for this system</p>
+                <div id="acm-display"></div>
+            </div>
+        </section>
+
+        <!-- ITEM DETAILS MODAL (NEW) -->
+        <div id="details-modal" class="modal-overlay" style="display: none;" onclick="closeModal(event)">
+            <div class="modal-content card" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h2 id="details-item-name" style="margin: 0;">Item Details</h2>
+                    <span id="details-item-badge" class="item-badge">Type</span>
+                </div>
+
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Location</span>
+                        <p id="details-item-location" class="detail-value">📍 Loading...</p>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Reported On</span>
+                        <p id="details-item-time" class="detail-value">🕒 Loading...</p>
+                    </div>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Description</span>
+                    <div id="details-item-desc" class="item-desc-box">Loading...</div>
+                </div>
+
+                <div class="detail-item"
+                    style="border-top: 1px solid var(--border); padding-top: 25px; margin-top: 10px;">
+                    <span class="detail-label">Posted By</span>
+                    <p id="details-posted-by" class="detail-value">User Name</p>
+                </div>
+
+                <div id="details-actions" style="margin-top: 30px; display: flex; gap: 15px; flex-wrap: wrap;">
+                    <!-- Action buttons injected via JS -->
+                </div>
+
+                <button class="btn-secondary" style="margin-top: 25px; width: 100%; padding: 15px;"
+                    onclick="closeDetailsModal()">Close</button>
+            </div>
+        </div>
+
+        <!-- CLAIM MODAL (NEW) -->
+        <div id="claim-modal" class="modal-overlay" style="display: none;" onclick="closeModal(event)">
+            <div class="modal-content card" onclick="event.stopPropagation()">
+                <h2 id="claim-modal-title">Claim This Item</h2>
+                <p style="margin-bottom: 15px; color: #666;">Send a secure message to the poster to coordinate.</p>
+                <input type="hidden" id="claim-item-id">
+                <div class="form-group">
+                    <label>Propose a Meeting Location/Note</label>
+                    <textarea id="claim-message" rows="3"
+                        placeholder="Hi, I think this item belongs to me..."></textarea>
+                </div>
+                <div
+                    style="background: #e0f2fe; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem;">
+                    <i class="fas fa-signature"></i> Your claim will be digitally signed with <b>ECDSA</b> to verify
+                    your identity.
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-primary" onclick="submitClaim()">Send Signed Claim</button>
+                    <button class="btn-secondary"
+                        onclick="document.getElementById('claim-modal').style.display='none'">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- REPLY MODAL (NEW) -->
+        <div id="reply-modal" class="modal-overlay" style="display: none;" onclick="closeModal(event)">
+            <div class="modal-content card" onclick="event.stopPropagation()">
+                <h2 id="reply-modal-title">Reply to Message</h2>
+                <input type="hidden" id="reply-to-user">
+                <input type="hidden" id="reply-item-id">
+                <div class="form-group">
+                    <label>Your Response</label>
+                    <textarea id="reply-message" rows="3" placeholder="Typing reply..."></textarea>
+                </div>
+                <div
+                    style="background: #e0f2fe; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem;">
+                    <i class="fas fa-signature"></i> Your reply will be digitally signed with <b>ECDSA</b>.
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-primary" onclick="submitReply()">Send Reply</button>
+                    <button class="btn-secondary"
+                        onclick="document.getElementById('reply-modal').style.display='none'">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- POST ITEM MODAL -->
+        <div id="post-modal" class="modal-overlay" style="display: none;" onclick="closeModal(event)">
+            <div class="modal-content card" onclick="event.stopPropagation()">
+                <h2>Post New Item</h2>
+                <div class="form-group">
+                    <label>Item Name</label>
+                    <input type="text" id="modal-item-name" placeholder="e.g., Blue Backpack">
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <select id="modal-item-type">
+                        <option value="Lost">Lost</option>
+                        <option value="Found">Found</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="modal-item-location" placeholder="e.g., Library Lounge">
+                </div>
+                <div class="form-group">
+                    <label>Description (Optional)</label>
+                    <textarea id="modal-item-desc" rows="3"
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;"></textarea>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-primary" onclick="submitItem()">Post Item</button>
+                    <button class="btn-secondary" onclick="closePostModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FORGOT PASSWORD MODAL -->
+        <div id="forgot-password-modal" class="modal-overlay" style="display: none;" onclick="closeModal(event)">
+            <div class="modal-content card" onclick="event.stopPropagation()">
+                <h2>Recover Account</h2>
+                <p style="margin-bottom: 20px; font-size: 0.9rem; color: #666;">Enter your registered email to
+                    receive recovery instructions.</p>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="forgot-email" placeholder="your-email@amrita.edu">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-primary" onclick="handleForgotPassword()">Send Instructions</button>
+                    <button class="btn-secondary" onclick="closeForgotPasswordModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>
